@@ -1,17 +1,17 @@
 
 #include <Sabertooth.h>
 
-Sabertooth ST[2] = { Sabertooth(128), Sabertooth(129) }; //128 ->Left and right Drive, 129->Bucket Ladder
+Sabertooth ST[2] = { Sabertooth(128,Serial1), Sabertooth(129,Serial1) }; //128 ->Left and right Drive, 129->Bucket Ladder
 
-#define dir_1 7
-#define pwm_1 6
-#define dir_2 4
+#define dir_1 22
+#define pwm_1 2
+#define dir_2 23
 #define pwm_2 3
 
-#define dir_3 117
-#define pwm_3 116
-#define dir_4 114
-#define pwm_4 113
+#define dir_3 24
+#define pwm_3 4
+#define dir_4 25
+#define pwm_4 5
 
 
 
@@ -41,8 +41,30 @@ void loop()
 {
 
    byte OdroidIn[2];
+   
   Serial.readBytes(OdroidIn,2); 
-  //First byte: contains motorVal and checksum, in the Order Checksum:[5:0],motorVal[2:0]
+   unsigned int OdroidInInt = OdroidIn[1]+OdroidIn[0]*256;
+   unsigned int CRC = 18;
+   unsigned int msg = OdroidInInt % 2048;
+   unsigned int checksum = OdroidInInt / 2048;
+   unsigned int curr = msg*32 + checksum;
+
+   int a, index;
+   for (int i = 0; i < 16; i++) {
+    index = largestOneIndex(curr);
+    if (index == -1) {
+      break;
+    }
+    a = CRC << (index) - 5;
+    curr ^= a;
+   }
+   if (curr) {
+    // CRC came back bad
+    // do some error handling here??
+    return;
+   }
+   
+  //First byte: contains motorVal and checksum, in the Order Checksum:[4:0],motorVal[2:0]
   //Second byte: is the power value.
   /*
    * Input[0],[1],[2] correspond to motor
@@ -107,3 +129,14 @@ void Stop(){
   ST[1].stop();
   
   }
+
+int largestOneIndex(unsigned int curr) {
+  int i = 15;
+  while (i >= 0) {
+    if (curr & (1 << i)) {
+      break;
+    }
+    i--;
+  }
+  return i;
+}
