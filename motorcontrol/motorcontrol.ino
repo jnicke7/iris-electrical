@@ -21,6 +21,9 @@ void setup()
   SabertoothTXPinSerial.begin(9600);
   Sabertooth::autobaud(SabertoothTXPinSerial);
 
+  Serial.begin(9600); //serial input from Odroid.
+  
+
 pinMode(pwm_1,OUTPUT);
 pinMode(dir_1,OUTPUT);
 pinMode(pwm_2,OUTPUT);
@@ -36,13 +39,11 @@ pinMode(dir_4,OUTPUT);
 
 void loop()
 {
-   boolean Input[11];
 
-
-
-
-   
-  // insert code to put right things into input
+   byte OdroidIn[2];
+  Serial.readBytes(OdroidIn,2); 
+  //First byte: contains motorVal and checksum, in the Order Checksum:[5:0],motorVal[2:0]
+  //Second byte: is the power value.
   /*
    * Input[0],[1],[2] correspond to motor
   KEY:
@@ -55,17 +56,15 @@ void loop()
 5: agitator
 6: dump conveyor M
   */
-  int motorVal = (int)(Input[0])*4+(int)(Input[1])*2+(int)(Input[2]); 
-  int power = 0;
-  int increment = 1;
-  for(int i = 0; i<7; i++){
-    power+=increment*Input[10-i];
-    increment*=2;
-    }
-    if(Input[3] == 1 && motorVal<3){
+  int motorVal = OdroidIn[0] % 8; 
+  int power = OdroidIn[1] %128;
+    if(OdroidIn[1]/128 == 1 && motorVal<3){
       power*=-1;
-      }
-  if(motorVal<3){ //call a sabertooth for the action
+    }
+    if(motorVal == 7){
+      Stop();
+      } 
+  else if(motorVal<3){ //call a sabertooth for the action
     ST[Input[1]].motor((byte)(Input[2])+1,power); //THIS FUCKING LINE!!!!
     }
   else{//call a linAC
@@ -98,5 +97,13 @@ void loop()
   default : 
    return;
 }
+  
+  }
+void Stop(){
+  for(int i = 3; i<7; i++){
+    linAC(0,i);
+    }
+  ST[0].stop();
+  ST[1].stop();
   
   }
