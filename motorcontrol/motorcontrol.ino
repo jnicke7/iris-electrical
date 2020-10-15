@@ -52,9 +52,6 @@ void loop()
    int a, index;
    while (curr >= 32) {
     index = largestOneIndex(curr);
-    if (index == -1) {
-      break;
-    }
     a = CRC << (index - 5);
     curr ^= a;
    }
@@ -87,7 +84,7 @@ void loop()
       Stop();
       } 
   else if(motorVal<3){ //call a sabertooth for the action
-    ST[Input[1]].motor((byte)(Input[2])+1,power); //THIS FUCKING LINE!!!!
+    ST[(motorVal%4)/2].motor(motorVal%2+1,power);
     }
   else{//call a linAC
     linAC(power,motorVal);
@@ -99,22 +96,22 @@ void loop()
     switch(motor) {
 
    case 3 :
-      digitalWrite(dir_1, (int)(Input[3])); //controls the direction the motor;
+      digitalWrite(dir_1, (int)(OdroidIn[1]/128)); //controls the direction the motor;
       analogWrite(pwm_1, power*2); 
       break; 
    case 4 :
-      digitalWrite(dir_2, (int)(Input[3])); //controls the direction the motor;
+      digitalWrite(dir_2, (int)(OdroidIn[1]/128)); //controls the direction the motor;
       analogWrite(pwm_2, power*2);
       break; 
   case 5 :
-      digitalWrite(dir_3, (int)(Input[3])); //controls the direction the motor;
+      digitalWrite(dir_3, (int)(OdroidIn[1]/128)); //controls the direction the motor;
       analogWrite(pwm_3, power*2);
       break; /
   
    case 6 :
-      digitalWrite(dir_4, (int)(Input[3])); //controls the direction the motor;
+      digitalWrite(dir_4, (int)(OdroidIn[1]/128)); //controls the direction the motor;
       analogWrite(pwm_4, power*2);
-      break; 
+      break;  
   
   default : 
    return;
