@@ -50,12 +50,12 @@ void loop()
    unsigned int curr = msg*32 + checksum;
 
    int a, index;
-   for (int i = 0; i < 16; i++) {
+   while (curr >= 32) {
     index = largestOneIndex(curr);
     if (index == -1) {
       break;
     }
-    a = CRC << (index) - 5;
+    a = CRC << (index - 5);
     curr ^= a;
    }
    if (curr) {
