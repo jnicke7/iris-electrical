@@ -74,6 +74,7 @@ void loop()
 4: bucket ladder LA
 5: agitator
 6: dump conveyor M
+7: stops motors
   */
   int motorVal = OdroidIn[0] % 8; 
   int power = OdroidIn[1] %128;
