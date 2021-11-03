@@ -1,0 +1,24 @@
+{
+    "Header": {
+        "Comment": "All values are metric (mm)",
+        "CreationDate": "2021-11-03T23:07:24Z",
+        "GenerationSoftware": {
+            "Application": "EAGLE",
+            "Vendor": "Autodesk",
+            "Version": "9.5.0"
+        },
+        "Part": "Single"
+    },
+    "Overall": {
+        "BoardThickness": 1.57,
+        "LayerNumber": 2,
+        "Name": {
+            "ProjectId": "IRIS_Arduino_Shield_2"
+        },
+        "Owner": "Jake A Nickel <jake.a.nickel@gmail.com>",
+        "Size": {
+            "X": 88.92,
+            "Y": 72.06
+        }
+    }
+}
